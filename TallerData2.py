@@ -128,123 +128,6 @@ x_test_out = np.array(data_test.drop(['RainTomorrow'], 1))
 y_test_out = np.array(data_test.RainTomorrow)
 
 
-#REGRESION LOGISTICA ----------------------------------------------------------
-
-#MODELO
-logreg = LogisticRegression(solver='lbfgs', max_iter = 7600)
-
-#ENTRENAMIENTO
-logreg.fit(x_train,y_train)
-
-# METRICAS
-
-print('*'*50)
-print('Regresión Logística')
-
-# Accuracy de Entrenamiento de Entrenamiento
-print(f'accuracy de Entrenamiento de Entrenamiento: {logreg.score(x_train, y_train)}')
-
-# Accuracy de Test de Entrenamiento
-print(f'accuracy de Test de Entrenamiento: {logreg.score(x_test, y_test)}')
-
-# Accuracy de Validación
-print(f'accuracy de Validación: {logreg.score(x_test_out, y_test_out)}')
-
-
-
-# MAQUINA DE SOPORTE VECTORIAL-------------------------------------------------
-
-# MODELO
-svc = SVC(gamma='auto')
-
-# ENTRENAMIENTO
-svc.fit(x_train, y_train)
-
-# MÉTRICAS
-
-print('*'*50)
-print('Maquina de soporte vectorial')
-
-# Accuracy de Entrenamiento de Entrenamiento
-print(f'accuracy de Entrenamiento de Entrenamiento: {svc.score(x_train, y_train)}')
-
-# Accuracy de Test de Entrenamiento
-print(f'accuracy de Test de Entrenamiento: {svc.score(x_test, y_test)}')
-
-# Accuracy de Validación
-print(f'accuracy de Validación: {svc.score(x_test_out, y_test_out)}')
-
-
-# ARBOL DE DECISIÓN------------------------------------------------------------
-
-# Seleccionar un modelo
-arbol = DecisionTreeClassifier()
-
-# Entreno el modelo
-arbol.fit(x_train, y_train)
-
-# MÉTRICAS
-
-print('*'*50)
-print('Decisión Tree')
-
-# Accuracy de Entrenamiento de Entrenamiento
-print(f'accuracy de Entrenamiento de Entrenamiento: {arbol.score(x_train, y_train)}')
-
-# Accuracy de Test de Entrenamiento
-print(f'accuracy de Test de Entrenamiento: {arbol.score(x_test, y_test)}')
-
-# Accuracy de Validación
-print(f'accuracy de Validación: {arbol.score(x_test_out, y_test_out)}')
-
-
-# RANDOM FOREST------------------------------------------------------------
-
-# Seleccionar un modelo
-forest = RandomForestClassifier()
-
-# Entreno el modelo
-forest.fit(x_train, y_train)
-
-# MÉTRICAS
-
-print('*'*50)
-print('RANDOM FOREST')
-
-# Accuracy de Entrenamiento de Entrenamiento
-print(f'accuracy de Entrenamiento de Entrenamiento: {forest.score(x_train, y_train)}')
-
-# Accuracy de Test de Entrenamiento
-print(f'accuracy de Test de Entrenamiento: {forest.score(x_test, y_test)}')
-
-# Accuracy de Validación
-print(f'accuracy de Validación: {forest.score(x_test_out, y_test_out)}')
-
-
-# NAIVE BAYES------------------------------------------------------------
-
-# Seleccionar un modelo
-nayve = GaussianNB()
-
-# Entreno el modelo
-nayve.fit(x_train, y_train)
-
-# MÉTRICAS
-
-print('*'*50)
-print('NAYVE BAYES')
-
-# Accuracy de Entrenamiento de Entrenamiento
-print(f'accuracy de Entrenamiento de Entrenamiento: {nayve.score(x_train, y_train)}')
-
-# Accuracy de Test de Entrenamiento
-print(f'accuracy de Test de Entrenamiento: {nayve.score(x_test, y_test)}')
-
-# Accuracy de Validación
-print(f'accuracy de Validación: {nayve.score(x_test_out, y_test_out)}')
-
-
-
 # REGRESIÓN LOGÍSTICA CON VALIDACIÓN CRUZADA
 
 kfold = KFold(n_splits=10)
@@ -281,7 +164,7 @@ print(f'Matriz de confusión: {confusion_matrix(y_test_out, y_pred)}')
 matriz_confusion = confusion_matrix(y_test_out, y_pred)
 plt.figure(figsize = (6, 6))
 sns.heatmap(matriz_confusion)
-plt.title("Matriz de confusion")
+plt.title("Matriz de confusion regresion logistica")
 
 precision = precision_score(y_test_out, y_pred, average=None).mean()
 print(f'Precisión: {precision}')
@@ -291,4 +174,241 @@ print(f'Re-call: {recall}')
 
 f1_score = f1_score(y_test_out, y_pred, average=None).mean()
 
-print(f'f1: {f1_score}')  
+print(f'f1: {f1_score}')
+
+
+
+# MAQUINA DE SOPORTE VECTORIAL CON VALIDACION CRUZADA-------------------------------------------------
+
+# MODELO
+svc = SVC(gamma='auto')
+
+kfold = KFold(n_splits=10)
+
+acc_scores_train_train = []
+acc_scores_test_train = []
+
+# ENTRENAMIENTO
+
+for train, test in kfold.split(x, y):
+    svc.fit(x[train], y[train])
+    scores_train_train = svc.score(x[train], y[train])
+    scores_test_train = svc.score(x[test], y[test])
+    acc_scores_train_train.append(scores_train_train)
+    acc_scores_test_train.append(scores_test_train)
+    
+y_pred = svc.predict(x_test_out)
+
+
+# MÉTRICAS
+
+print('*'*50)
+print('Maquina de soporte vectorial con Validación cruzada')
+
+# Accuracy de Entrenamiento de Entrenamiento
+print(f'accuracy de Entrenamiento de Entrenamiento: {np.array(acc_scores_train_train).mean()}')
+
+# Accuracy de Test de Entrenamiento
+print(f'accuracy de Test de Entrenamiento: {np.array(acc_scores_test_train).mean()}')
+
+# Accuracy de Validación
+print(f'accuracy de Validación: {svc.score(x_test_out, y_test_out)}')
+
+
+# Matriz de confusión
+print(f'Matriz de confusión: {confusion_matrix(y_test_out, y_pred)}')
+
+matriz_confusion = confusion_matrix(y_test_out, y_pred)
+plt.figure(figsize = (6, 6))
+sns.heatmap(matriz_confusion)
+plt.title("Matriz de confusion maquina de soporte vectorial")
+
+precision = precision_score(y_test_out, y_pred, average=None).mean()
+print(f'Precisión: {precision}')
+
+recall = recall_score(y_test_out, y_pred, average=None).mean()
+print(f'Re-call: {recall}')
+
+f1_score = f1_score(y_test_out, y_pred, average=None).mean()
+
+print(f'f1: {f1_score}')
+
+
+# ARBOL DE DECISIÓN CON VALIDACION CRUZADA------------------------------------------------------------
+
+# Seleccionar un modelo
+arbol = DecisionTreeClassifier()
+
+# Entreno el modelo
+arbol.fit(x_train, y_train)
+
+kfold = KFold(n_splits=10)
+
+acc_scores_train_train = []
+acc_scores_test_train = []
+# MÉTRICAS
+
+for train, test in kfold.split(x, y):
+    arbol.fit(x[train], y[train])
+    scores_train_train = arbol.score(x[train], y[train])
+    scores_test_train = arbol.score(x[test], y[test])
+    acc_scores_train_train.append(scores_train_train)
+    acc_scores_test_train.append(scores_test_train)
+    
+y_pred = arbol.predict(x_test_out)
+
+
+# MÉTRICAS
+
+print('*'*50)
+print('Arbol de decision con Validación cruzada')
+
+# Accuracy de Entrenamiento de Entrenamiento
+print(f'accuracy de Entrenamiento de Entrenamiento: {np.array(acc_scores_train_train).mean()}')
+
+# Accuracy de Test de Entrenamiento
+print(f'accuracy de Test de Entrenamiento: {np.array(acc_scores_test_train).mean()}')
+
+# Accuracy de Validación
+print(f'accuracy de Validación: {svc.score(x_test_out, y_test_out)}')
+
+
+# Matriz de confusión
+print(f'Matriz de confusión: {confusion_matrix(y_test_out, y_pred)}')
+
+matriz_confusion = confusion_matrix(y_test_out, y_pred)
+plt.figure(figsize = (6, 6))
+sns.heatmap(matriz_confusion)
+plt.title("Matriz de confusion arbol de decision")
+
+precision = precision_score(y_test_out, y_pred, average=None).mean()
+print(f'Precisión: {precision}')
+
+recall = recall_score(y_test_out, y_pred, average=None).mean()
+print(f'Re-call: {recall}')
+
+f1_score = f1_score(y_test_out, y_pred, average=None).mean()
+
+print(f'f1: {f1_score}')
+
+
+
+# RANDOM FOREST------------------------------------------------------------
+
+# Seleccionar un modelo
+forest = RandomForestClassifier()
+
+# Entreno el modelo
+forest.fit(x_train, y_train)
+
+# MÉTRICAS
+
+kfold = KFold(n_splits=10)
+
+acc_scores_train_train = []
+acc_scores_test_train = []
+# MÉTRICAS
+
+for train, test in kfold.split(x, y):
+    forest.fit(x[train], y[train])
+    scores_train_train = forest.score(x[train], y[train])
+    scores_test_train = forest.score(x[test], y[test])
+    acc_scores_train_train.append(scores_train_train)
+    acc_scores_test_train.append(scores_test_train)
+    
+y_pred = forest.predict(x_test_out)
+
+
+# MÉTRICAS
+
+print('*'*50)
+print('Randon forest con Validación cruzada')
+
+# Accuracy de Entrenamiento de Entrenamiento
+print(f'accuracy de Entrenamiento de Entrenamiento: {np.array(acc_scores_train_train).mean()}')
+
+# Accuracy de Test de Entrenamiento
+print(f'accuracy de Test de Entrenamiento: {np.array(acc_scores_test_train).mean()}')
+
+# Accuracy de Validación
+print(f'accuracy de Validación: {svc.score(x_test_out, y_test_out)}')
+
+
+# Matriz de confusión
+print(f'Matriz de confusión: {confusion_matrix(y_test_out, y_pred)}')
+
+matriz_confusion = confusion_matrix(y_test_out, y_pred)
+plt.figure(figsize = (6, 6))
+sns.heatmap(matriz_confusion)
+plt.title("Matriz de confusion Randon forest")
+
+precision = precision_score(y_test_out, y_pred, average=None).mean()
+print(f'Precisión: {precision}')
+
+recall = recall_score(y_test_out, y_pred, average=None).mean()
+print(f'Re-call: {recall}')
+
+f1_score = f1_score(y_test_out, y_pred, average=None).mean()
+
+print(f'f1: {f1_score}')
+
+
+# NAIVE BAYES CON VALIDACION CRUZADA------------------------------------------------------------
+
+
+# Seleccionar un modelo
+nayve = GaussianNB()
+
+# Entreno el modelo
+nayve.fit(x_train, y_train)
+
+# MÉTRICAS
+
+kfold = KFold(n_splits=10)
+
+acc_scores_train_train = []
+acc_scores_test_train = []
+# MÉTRICAS
+
+for train, test in kfold.split(x, y):
+    nayve.fit(x[train], y[train])
+    scores_train_train = nayve.score(x[train], y[train])
+    scores_test_train = nayve.score(x[test], y[test])
+    acc_scores_train_train.append(scores_train_train)
+    acc_scores_test_train.append(scores_test_train)
+    
+y_pred = nayve.predict(x_test_out)
+
+
+# MÉTRICAS
+
+print('*'*50)
+print('Nayve bayes Validación cruzada')
+
+# Accuracy de Entrenamiento de Entrenamiento
+print(f'accuracy de Entrenamiento de Entrenamiento: {np.array(acc_scores_train_train).mean()}')
+
+# Accuracy de Test de Entrenamiento
+print(f'accuracy de Test de Entrenamiento: {np.array(acc_scores_test_train).mean()}')
+
+# Accuracy de Validación
+print(f'accuracy de Validación: {svc.score(x_test_out, y_test_out)}')
+
+
+# Matriz de confusión
+print(f'Matriz de confusión: {confusion_matrix(y_test_out, y_pred)}')
+
+matriz_confusion = confusion_matrix(y_test_out, y_pred)
+plt.figure(figsize = (6, 6))
+sns.heatmap(matriz_confusion)
+plt.title("Matriz de confusion Nayve")
+
+precision = precision_score(y_test_out, y_pred, average=None).mean()
+print(f'Precisión: {precision}')
+
+recall = recall_score(y_test_out, y_pred, average=None).mean()
+print(f'Re-call: {recall}')
+
+f1_score = f1_score(y_test_out, y_pred, average=None).mean()
+
+print(f'f1: {f1_score}')
