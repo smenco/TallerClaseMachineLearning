@@ -114,60 +114,6 @@ print(f'f1: {f1_score}')
 
 
 
-# MAQUINA DE SOPORTE VECTORIAL CON VALIDACION CRUZADA-------------------------------------------------
-
-# MODELO
-svc = SVC(gamma='auto')
-
-kfold = KFold(n_splits=10)
-
-acc_scores_train_train = []
-acc_scores_test_train = []
-
-# ENTRENAMIENTO
-
-for train, test in kfold.split(x, y):
-    svc.fit(x[train], y[train])
-    scores_train_train = svc.score(x[train], y[train])
-    scores_test_train = svc.score(x[test], y[test])
-    acc_scores_train_train.append(scores_train_train)
-    acc_scores_test_train.append(scores_test_train)
-    
-y_pred = svc.predict(x_test_out)
-
-
-# MÉTRICAS
-
-print('*'*50)
-print('Maquina de soporte vectorial con Validación cruzada')
-
-# Accuracy de Entrenamiento de Entrenamiento
-print(f'accuracy de Entrenamiento de Entrenamiento: {np.array(acc_scores_train_train).mean()}')
-
-# Accuracy de Test de Entrenamiento
-print(f'accuracy de Test de Entrenamiento: {np.array(acc_scores_test_train).mean()}')
-
-# Accuracy de Validación
-print(f'accuracy de Validación: {svc.score(x_test_out, y_test_out)}')
-
-
-# Matriz de confusión
-print(f'Matriz de confusión: {confusion_matrix(y_test_out, y_pred)}')
-
-matriz_confusion = confusion_matrix(y_test_out, y_pred)
-plt.figure(figsize = (6, 6))
-sns.heatmap(matriz_confusion)
-plt.title("Matriz de confusion maquina de soporte vectorial")
-
-precision = precision_score(y_test_out, y_pred, average=None).mean()
-print(f'Precisión: {precision}')
-
-recall = recall_score(y_test_out, y_pred, average=None).mean()
-print(f'Re-call: {recall}')
-
-f1_score = f1_score(y_test_out, y_pred, average=None).mean()
-
-print(f'f1: {f1_score}')
 
 
 # ARBOL DE DECISIÓN CON VALIDACION CRUZADA------------------------------------------------------------
@@ -206,7 +152,7 @@ print(f'accuracy de Entrenamiento de Entrenamiento: {np.array(acc_scores_train_t
 print(f'accuracy de Test de Entrenamiento: {np.array(acc_scores_test_train).mean()}')
 
 # Accuracy de Validación
-print(f'accuracy de Validación: {svc.score(x_test_out, y_test_out)}')
+print(f'accuracy de Validación: {arbol.score(x_test_out, y_test_out)}')
 
 
 # Matriz de confusión
@@ -258,7 +204,7 @@ y_pred = forest.predict(x_test_out)
 # MÉTRICAS
 
 print('*'*50)
-print('Randon forest con Validación cruzada')
+print('Random forest con Validación cruzada')
 
 # Accuracy de Entrenamiento de Entrenamiento
 print(f'accuracy de Entrenamiento de Entrenamiento: {np.array(acc_scores_train_train).mean()}')
@@ -267,7 +213,7 @@ print(f'accuracy de Entrenamiento de Entrenamiento: {np.array(acc_scores_train_t
 print(f'accuracy de Test de Entrenamiento: {np.array(acc_scores_test_train).mean()}')
 
 # Accuracy de Validación
-print(f'accuracy de Validación: {svc.score(x_test_out, y_test_out)}')
+print(f'accuracy de Validación: {forest.score(x_test_out, y_test_out)}')
 
 
 # Matriz de confusión
@@ -276,7 +222,7 @@ print(f'Matriz de confusión: {confusion_matrix(y_test_out, y_pred)}')
 matriz_confusion = confusion_matrix(y_test_out, y_pred)
 plt.figure(figsize = (6, 6))
 sns.heatmap(matriz_confusion)
-plt.title("Matriz de confusion Randon forest")
+plt.title("Matriz de confusion Random forest")
 
 precision = precision_score(y_test_out, y_pred, average=None).mean()
 print(f'Precisión: {precision}')
@@ -328,7 +274,7 @@ print(f'accuracy de Entrenamiento de Entrenamiento: {np.array(acc_scores_train_t
 print(f'accuracy de Test de Entrenamiento: {np.array(acc_scores_test_train).mean()}')
 
 # Accuracy de Validación
-print(f'accuracy de Validación: {svc.score(x_test_out, y_test_out)}')
+print(f'accuracy de Validación: {nayve.score(x_test_out, y_test_out)}')
 
 
 # Matriz de confusión
@@ -338,6 +284,63 @@ matriz_confusion = confusion_matrix(y_test_out, y_pred)
 plt.figure(figsize = (6, 6))
 sns.heatmap(matriz_confusion)
 plt.title("Matriz de confusion Nayve")
+
+precision = precision_score(y_test_out, y_pred, average=None).mean()
+print(f'Precisión: {precision}')
+
+recall = recall_score(y_test_out, y_pred, average=None).mean()
+print(f'Re-call: {recall}')
+
+f1_score = f1_score(y_test_out, y_pred, average=None).mean()
+
+print(f'f1: {f1_score}')
+
+
+
+# MAQUINA DE SOPORTE VECTORIAL CON VALIDACION CRUZADA-------------------------------------------------
+
+# MODELO
+svc = SVC(gamma='auto')
+
+kfold = KFold(n_splits=10)
+
+acc_scores_train_train = []
+acc_scores_test_train = []
+
+# ENTRENAMIENTO
+
+for train, test in kfold.split(x, y):
+    svc.fit(x[train], y[train])
+    scores_train_train = svc.score(x[train], y[train])
+    scores_test_train = svc.score(x[test], y[test])
+    acc_scores_train_train.append(scores_train_train)
+    acc_scores_test_train.append(scores_test_train)
+    
+y_pred = svc.predict(x_test_out)
+
+
+# MÉTRICAS
+
+print('*'*50)
+print('Maquina de soporte vectorial con Validación cruzada')
+
+# Accuracy de Entrenamiento de Entrenamiento
+print(f'accuracy de Entrenamiento de Entrenamiento: {np.array(acc_scores_train_train).mean()}')
+
+# Accuracy de Test de Entrenamiento
+print(f'accuracy de Test de Entrenamiento: {np.array(acc_scores_test_train).mean()}')
+
+# Accuracy de Validación
+print(f'accuracy de Validación: {svc.score(x_test_out, y_test_out)}')
+
+
+# Matriz de confusión
+print(f'Matriz de confusión: {confusion_matrix(y_test_out, y_pred)}')
+
+matriz_confusion = confusion_matrix(y_test_out, y_pred)
+plt.figure(figsize = (6, 6))
+sns.heatmap(matriz_confusion)
+plt.title("Matriz de confusion maquina de soporte vectorial")
 
 precision = precision_score(y_test_out, y_pred, average=None).mean()
 print(f'Precisión: {precision}')
